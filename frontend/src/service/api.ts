@@ -58,6 +58,24 @@ export class ApiService {
         }
     }
 
+    async deleteQuiz(quizId: string): Promise<boolean> {
+        try {
+            const response = await fetch(`http://localhost:3000/api/quizzes/${quizId}`, {
+                method: "DELETE"
+            });
+
+            if (!response.ok) {
+                alert("Failed to delete quiz!");
+                return false;
+            }
+
+            return true;
+        } catch (error) {
+            alert(`Failed to delete quiz: ${error instanceof Error ? error.message : error}`);
+            return false;
+        }
+    }
+
     async uploadImage(file: File): Promise<{ id: string; url: string } | null> {
         const formData = new FormData();
         formData.append("image", file);

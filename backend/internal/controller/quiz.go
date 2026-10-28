@@ -61,6 +61,23 @@ func (c QuizController) UpdateQuizById(ctx *fiber.Ctx) error {
 	return ctx.SendStatus(fiber.StatusOK)
 }
 
+func (c QuizController) DeleteQuizById(ctx *fiber.Ctx) error {
+	quizId, err := primitive.ObjectIDFromHex(ctx.Params("quizId"))
+	if err != nil {
+		return ctx.SendStatus(fiber.StatusBadRequest)
+	}
+
+	deleted, err := c.quizService.DeleteQuiz(quizId)
+	if err != nil {
+		return err
+	}
+	if !deleted {
+		return ctx.SendStatus(fiber.StatusNotFound)
+	}
+
+	return ctx.SendStatus(fiber.StatusNoContent)
+}
+
 func (c QuizController) GetQuizzes(ctx *fiber.Ctx) error {
 	quizzes, err := c.quizService.GetQuizzes()
 	if err != nil {
@@ -86,4 +103,3 @@ func (c QuizController) CreateQuiz(ctx *fiber.Ctx) error {
 
 	return ctx.Status(fiber.StatusCreated).JSON(created)
 }
-

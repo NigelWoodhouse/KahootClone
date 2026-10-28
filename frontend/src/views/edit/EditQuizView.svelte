@@ -4,8 +4,10 @@
     import EditSidebar from "../../lib/edit/EditSidebar.svelte";
     import type { Quiz, QuizQuestion } from "../../model/quiz";
     import { apiService } from "../../service/api";
+    import { createEventDispatcher } from 'svelte';
 
     export let params: Record<string, string>;
+    const dispatch = createEventDispatcher();
 
     let quiz: Quiz | null;
     let selectedQuestion: QuizQuestion | null = null;
@@ -19,9 +21,9 @@
         selectedQuestion = null;
     }
 
-    function goBack() {
-        window.history.back();
-    }
+        function onBack() {
+            window.history.back();
+        }
 
     (async function () {
         quiz = await apiService.getQuizById(params["quizId"]);
@@ -64,7 +66,7 @@
                 bind:value={quiz.name}
             />
             <Button on:click={save}>{isSaving ? "Saving..." : "Save"}</Button>
-            <Button on:click={goBack}>{"Back"}</Button>
+            <Button on:click={onBack}>{"Back"}</Button>
         </div>
     </div>
     <div class="flex">

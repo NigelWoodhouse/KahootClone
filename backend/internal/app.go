@@ -44,6 +44,7 @@ func (a *App) setupHttp() {
 	app.Post("/api/quizzes", quizController.CreateQuiz)
 	app.Get("/api/quizzes/:quizId", quizController.GetQuizById)
 	app.Put("/api/quizzes/:quizId", quizController.UpdateQuizById)
+	app.Delete("/api/quizzes/:quizId", quizController.DeleteQuizById)
 
 	imageController := controller.Image(a.imageService)
 	app.Post("/api/upload", imageController.UploadImage)

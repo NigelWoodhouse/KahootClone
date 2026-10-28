@@ -66,3 +66,12 @@ func (c QuizCollection) UpdateQuiz(quiz entity.Quiz) error {
 
 	return err
 }
+
+func (c QuizCollection) DeleteQuiz(id primitive.ObjectID) (bool, error) {
+	result, err := c.collection.DeleteOne(context.Background(), bson.M{"_id": id})
+	if err != nil {
+		return false, err
+	}
+
+	return result.DeletedCount > 0, nil
+}
