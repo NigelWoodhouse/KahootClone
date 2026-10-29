@@ -26,15 +26,6 @@
                 <Clock>
                     <span class="text-3xl">{$tick}</span>
                 </Clock>
-                {#if $currentQuestion.image}
-                    <img
-                        src={apiService.getImageUrl($currentQuestion.image)}
-                        alt="Question visual"
-                        class="max-w-[500px] max-h-[320px] object-contain rounded-xl shadow-md"
-                    />
-                {:else}
-                    <div class="w-[500px]"></div>
-                {/if}
                 <div class="w-24"></div>
             </div>
         </div>
