@@ -36,16 +36,17 @@
     })();
 </script>
 
-<div class="p-8 max-w-4xl mx-auto">
-    <div class="flex justify-between items-center mb-6">
-        <h2 class="text-4xl font-bold">Your quizzes</h2>
+<div class="lobby-background justify-center min-h-screen max-w-4xl mx-auto">
+<div class="flex justify-center items-center gap-4 p-4">
+        <h2 class="text-4xl center font-bold text-white">Quizzes</h2>
         {#if quizzes && quizzes.length > 0}
         <div>
             <Button on:click={createQuiz}>Create Quiz</Button>
             <Button on:click={onBack}>Back</Button>
         </div>
         {/if}
-    </div>
+</div>
+
 
     {#if loading}
         <p class="text-gray-500">Loading quizzes...</p>
@@ -67,3 +68,9 @@
     {/if}
 
 </div>
+
+<style>
+    .lobby-background {
+        background: linear-gradient(to left, #8f94fb, #4e54c8);
+    }
+</style>
