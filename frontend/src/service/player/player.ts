@@ -7,6 +7,7 @@ export const points: Writable<number> = writable(0);
 export const leaderboard: Writable<LeaderboardEntry[]> = writable([]);
 export const intermissionImage: Writable<string | null> = writable(null);
 export const intermissionQuestionName: Writable<string | null> = writable(null);
+export const gameCancelled: Writable<boolean> = writable(false);
 
 export class PlayerGame {
     private net: NetService;
@@ -18,6 +19,7 @@ export class PlayerGame {
     }
 
     join(code: string, name: string){
+        gameCancelled.set(false);
         let packet: ConnectPacket = {
             id: PacketTypes.Connect,
             code: code,
@@ -38,6 +40,16 @@ export class PlayerGame {
 
     onPacket(packet: Packet){
         switch(packet.id){
+            case PacketTypes.CancelGame: {
+                gameCancelled.set(true);
+                gameState.set(GameState.Lobby);
+                points.set(0);
+                leaderboard.set([]);
+                intermissionImage.set(null);
+                intermissionQuestionName.set(null);
+                break;
+            }
+
             case PacketTypes.ChangeGameState:{
                 let data = packet as ChangeGameStatePacket;
                 gameState.set(data.state);

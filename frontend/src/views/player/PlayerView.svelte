@@ -1,6 +1,6 @@
 <script lang="ts">
     import { GameState } from "../../service/net";
-    import { PlayerGame, gameState } from "../../service/player/player";
+    import { PlayerGame, gameCancelled, gameState } from "../../service/player/player";
     import PlayerJoinView from "./PlayerJoinView.svelte";
     import PlayerLobbyView from "./PlayerLobbyView.svelte";
     import PlayerPlayView from "./PlayerPlayView.svelte";
@@ -14,6 +14,10 @@
         active = true;
     }
 
+    $: if ($gameCancelled) {
+        active = false;
+    }
+
     let views: Partial<Record<GameState, any>> = {
         [GameState.Lobby]: PlayerLobbyView,
         [GameState.Play]: PlayerPlayView,
@@ -25,5 +29,5 @@
 {#if active}
     <svelte:component this={views[$gameState]} {game} />
 {:else}
-    <PlayerJoinView on:join={onJoin} {game} />
+    <PlayerJoinView on:join={onJoin} {game} sessionClosed={$gameCancelled} />
 {/if}

@@ -11,7 +11,8 @@ export enum PacketTypes {
     Answer,
     PlayerReveal,
     Leaderboard,
-    PlayerDisconnect
+    PlayerDisconnect,
+    CancelGame
 }
 
 export enum GameState {

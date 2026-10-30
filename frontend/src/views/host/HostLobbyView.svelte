@@ -1,12 +1,19 @@
 <script lang="ts">
     import Button from "../../lib/Button.svelte";
-    import PlayerNameCard from "../../lib/lobby/PlayerNameCard.svelte";
-    import { players, type HostGame, gameCode } from "../../service/host/host";
+    import { players, type HostGame, gameCancelled, gameCode } from "../../service/host/host";
 
     export let game: HostGame;
 
     function start() {
         game.start();
+    }
+
+    function cancel() {
+        game.cancel();
+    }
+
+    function chooseQuiz() {
+        game.returnToQuizSelection();
     }
 
     const bubblePatterns = [
@@ -65,36 +72,35 @@
     </ul>
 
     <div class="relative z-10">
-        <div class="flex justify-end">
-            <Button on:click={start}>Start game</Button>
-        </div>
-        <div class="text-center text-white">
-            <h2 class="text-4xl">Join with game code</h2>
-            <h2 class="mt-4 text-6xl font-bold">{$gameCode}</h2>
-        </div>
-        <!-- <h2 class="mt-10 text-4xl text-center text-white font-bold text-white">
-            Players ({$players.length})
-        </h2> -->
-        <!-- <div class="mt-4 flex flex-wrap gap-2">
-            {#each $players as player (player.id)}
-                <PlayerNameCard {player} />
-            {:else}
-                <p class="text-white">No players have joined yet</p>
-            {/each}
-        </div> -->
-        <div class="mt-10 text-center text-white">
-            {#if $players.length == 0}
-                <p class="text-white">No players have joined yet</p>
-            {:else if $players.length == 1}
-                <p class="mt-10 text-center text-white text-white">
-                    {$players.length} player is in the lobby
-                </p>
-            {:else}
-                <p class="mt-10 text-center text-white text-white">
-                    {$players.length} players are in the lobby
-                </p>
-            {/if}
-        </div>
+        {#if $gameCancelled}
+            <div class="text-center text-white">
+                <h2 class="text-4xl">Game cancelled</h2>
+                <p class="mt-4">The session is closed and all players have been disconnected.</p>
+                <Button on:click={chooseQuiz}>Choose Quiz</Button>
+            </div>
+        {:else}
+            <div class="flex justify-end px-4 gap-4">
+                <Button on:click={start}>Start Game</Button>
+                <Button on:click={cancel}>Cancel Game</Button>
+            </div>
+            <div class="text-center text-white">
+                <h2 class="text-4xl">Join with game code</h2>
+                <h2 class="mt-4 text-6xl font-bold">{$gameCode}</h2>
+            </div>
+            <div class="mt-10 text-center text-white">
+                {#if $players.length == 0}
+                    <p class="text-white">No players have joined yet</p>
+                {:else if $players.length == 1}
+                    <p class="mt-10 text-center text-white">
+                        {$players.length} player is in the lobby
+                    </p>
+                {:else}
+                    <p class="mt-10 text-center text-white">
+                        {$players.length} players are in the lobby
+                    </p>
+                {/if}
+            </div>
+        {/if}
     </div>
 </div>
 

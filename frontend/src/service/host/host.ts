@@ -11,6 +11,18 @@ export const leaderboard: Writable<LeaderboardEntry[]> = writable([]);
 export const currentQuestion: Writable<QuizQuestion | null> = writable(null);
 export const intermissionImage: Writable<string | null> = writable(null);
 export const intermissionQuestionName: Writable<string | null> = writable(null);
+export const gameCancelled: Writable<boolean> = writable(false);
+
+function resetHostState() {
+    gameCode.set(null);
+    gameState.set(GameState.Lobby);
+    players.set([]);
+    tick.set(0);
+    leaderboard.set([]);
+    currentQuestion.set(null);
+    intermissionImage.set(null);
+    intermissionQuestionName.set(null);
+}
 
 export class HostGame {
     private net: NetService;
@@ -22,6 +34,7 @@ export class HostGame {
     }
 
     hostQuiz(quizId: string){
+        gameCancelled.set(false);
         let packet: HostGamePacket = {
             id: PacketTypes.HostGame,
             quizId: quizId,
@@ -34,8 +47,22 @@ export class HostGame {
         this.net.sendPacket({ id: PacketTypes.StartGame });
     }
 
+    cancel() {
+        this.net.sendPacket({ id: PacketTypes.CancelGame });
+    }
+
+    returnToQuizSelection() {
+        gameCancelled.set(false);
+    }
+
     onPacket(packet: Packet){
         switch(packet.id){
+            case PacketTypes.CancelGame: {
+                resetHostState();
+                gameCancelled.set(true);
+                break;
+            }
+
             case PacketTypes.HostGame: {
                 let data = packet as HostGamePacket;
                 gameCode.set(data.quizId);

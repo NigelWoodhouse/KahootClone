@@ -49,6 +49,9 @@ type PlayerDisconnectPacket struct {
 	PlayerId uuid.UUID `json:"playerId"`
 }
 
+type CancelGamePacket struct {
+}
+
 type StartGamePacket struct {
 }
 
@@ -88,6 +91,10 @@ func (c *NetService) packetIdToPacket(packetId uint8) any {
 		{
 			return &QuestionAnswerPacket{}
 		}
+	case 11:
+		{
+			return &CancelGamePacket{}
+		}
 	}
 
 	return nil
@@ -126,6 +133,10 @@ func (c *NetService) packetToPacketId(packet any) (uint8, error) {
 	case PlayerDisconnectPacket:
 		{
 			return 10, nil
+		}
+	case CancelGamePacket:
+		{
+			return 11, nil
 		}
 	}
 
@@ -242,6 +253,33 @@ func (c *NetService) OnIncomingMessage(con *websocket.Conn, mt int, msg []byte) 
 			}
 
 			game.StartOrSkip()
+			break
+		}
+	case *CancelGamePacket:
+		{
+			game := c.getGameByHost(con)
+			if game == nil {
+				return
+			}
+
+			game.Ended = true
+			for i, activeGame := range c.games {
+				if activeGame == game {
+					copy(c.games[i:], c.games[i+1:])
+					c.games[len(c.games)-1] = nil
+					c.games = c.games[:len(c.games)-1]
+					break
+				}
+			}
+
+			for _, player := range game.Players {
+				if err := c.SendPacket(player.Connection, CancelGamePacket{}); err != nil {
+					fmt.Println(err)
+				}
+			}
+			if err := c.SendPacket(con, CancelGamePacket{}); err != nil {
+				fmt.Println(err)
+			}
 			break
 		}
 	case *QuestionAnswerPacket:
