@@ -58,7 +58,7 @@
     );
 </script>
 
-<div class="relative isolate min-h-screen w-full overflow-hidden p-8 lobby-background">
+<div class="page-background relative isolate min-h-screen w-full overflow-hidden p-8">
     <ul class="bubbles" aria-hidden="true">
         {#each bubbles as bubble, i (bubble.player?.id ?? `decoration-${i}`)}
             <li
@@ -74,7 +74,7 @@
     <div class="relative z-10">
         {#if $gameCancelled}
             <div class="text-center text-white">
-                <h2 class="text-4xl">Game cancelled</h2>
+                <h2 class="text-4xl">Game Cancelled</h2>
                 <p class="mt-4">The session is closed and all players have been disconnected.</p>
                 <Button on:click={chooseQuiz}>Choose Quiz</Button>
             </div>
@@ -105,10 +105,6 @@
 </div>
 
 <style>
-    .lobby-background {
-        background: linear-gradient(to left, #8f94fb, #4e54c8);
-    }
-
     .bubbles {
         position: absolute;
         inset: 0;

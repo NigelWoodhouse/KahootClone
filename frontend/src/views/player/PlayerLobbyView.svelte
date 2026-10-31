@@ -18,7 +18,7 @@
 </script>
 
 <div
-    class="lobby-background relative isolate flex min-h-screen w-full items-center justify-center overflow-hidden px-6 py-12 text-center"
+    class="page-background relative isolate flex min-h-screen w-full items-center justify-center overflow-hidden px-6 py-12 text-center"
 >
     <ul class="bubbles" aria-hidden="true">
         {#each circles as circle}
@@ -37,10 +37,6 @@
 </div>
 
 <style>
-    .lobby-background {
-        background: linear-gradient(to left, #8f94fb, #4e54c8);
-    }
-
     .bubbles {
         position: absolute;
         inset: 0;

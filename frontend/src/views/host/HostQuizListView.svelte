@@ -36,7 +36,7 @@
     })();
 </script>
 
-<div class="lobby-background justify-center min-h-screen max-w-4xl mx-auto">
+<div class="page-background justify-center min-h-screen max-w-4xl mx-auto">
 <div class="flex justify-center items-center gap-4 p-4">
         <h2 class="text-4xl center font-bold text-white">Quizzes</h2>
         {#if quizzes && quizzes.length > 0}
@@ -68,9 +68,3 @@
     {/if}
 
 </div>
-
-<style>
-    .lobby-background {
-        background: linear-gradient(to left, #8f94fb, #4e54c8);
-    }
-</style>

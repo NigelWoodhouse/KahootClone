@@ -102,13 +102,13 @@ func (c *NetService) packetIdToPacket(packetId uint8) any {
 
 func (c *NetService) packetToPacketId(packet any) (uint8, error) {
 	switch packet.(type) {
-	case QuestionShowPacket:
-		{
-			return 2, nil
-		}
 	case HostGamePacket:
 		{
 			return 1, nil
+		}
+	case QuestionShowPacket:
+		{
+			return 2, nil
 		}
 	case ChangeGameStatePacket:
 		{

@@ -52,7 +52,7 @@ type Game struct {
 }
 
 func generateCode() string {
-	return strconv.Itoa(100000 + rand.Intn(900000))
+	return strconv.Itoa(1000 + rand.Intn(9000))
 }
 
 func newGame(quiz entity.Quiz, host *websocket.Conn, netService *NetService) Game {
