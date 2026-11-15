@@ -14,9 +14,16 @@
     $: questionName = $intermissionQuestionName || $currentQuestion?.name || "";
 </script>
 
-<div class="bg-gradient-to-br from-purple-900 via-indigo-900 to-purple-800 min-h-screen w-full flex flex-col text-white">
+<div class="page-background relative isolate min-h-screen w-full overflow-hidden flex flex-col text-white">
+    <ul class="bubbles" aria-hidden="true">
+        {#each [100, 40, 50, 80, 60, 130, 150, 45, 35, 170] as size, i}
+            <li
+                style="left: {10 + ((i * 37) % 80)}%; width: {size}px; height: {size}px; animation-delay: {i * 1.5}s; animation-duration: {12 + ((i * 7) % 20)}s"
+            ></li>
+        {/each}
+    </ul>
     <!-- Top Header Bar -->
-    <div class="flex justify-between items-center px-10 py-6 border-b border-white/10 bg-black/20 backdrop-blur-sm">
+    <div class="relative z-10 flex justify-between items-center px-10 py-6 border-b border-white/10 bg-black/20 backdrop-blur-sm">
         <div class="flex items-center gap-4">
             <span class="bg-yellow-400 text-purple-950 px-3.5 py-1 rounded-full text-sm font-extrabold tracking-wider uppercase shadow-md">
                 Intermission
@@ -42,7 +49,7 @@
     </div>
 
     <!-- Main Content Stage -->
-    <div class="flex-1 flex items-center justify-center p-8">
+    <div class="relative z-10 flex-1 flex items-center justify-center p-8">
         {#if displayImage}
             <div class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
                 <!-- Intermission Image Card -->

@@ -1,4 +1,5 @@
 <script lang="ts">
+    import { onMount } from "svelte";
     import { createEventDispatcher } from "svelte";
     import Button from "../../lib/Button.svelte";
     import type { PlayerGame } from "../../service/player/player";
@@ -14,6 +15,19 @@
         dispatch("join");
         game.join(code, name);
     }
+
+    onMount(() => {
+        const params = new URLSearchParams(window.location.search);
+        const debugCode = params.get("code");
+        const debugName = params.get("name");
+        if (params.get("debug") !== "players" || !debugCode || !debugName) {
+            return;
+        }
+
+        code = debugCode;
+        name = debugName;
+        join();
+    });
 </script>
 
 <div class="page-background min-h-screen w-full flex items-center justify-center">

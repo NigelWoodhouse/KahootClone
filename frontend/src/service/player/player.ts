@@ -3,7 +3,9 @@ import { NetService, PacketTypes, type Packet, type ConnectPacket, GameState, ty
 
 export const gameState: Writable<GameState> = writable(GameState.Lobby);
 export const state = gameState;
+export const playerName: Writable<string> = writable("");
 export const points: Writable<number> = writable(0);
+export const totalPoints: Writable<number> = writable(0);
 export const leaderboard: Writable<LeaderboardEntry[]> = writable([]);
 export const intermissionImage: Writable<string | null> = writable(null);
 export const intermissionQuestionName: Writable<string | null> = writable(null);
@@ -20,12 +22,16 @@ export class PlayerGame {
 
     join(code: string, name: string){
         gameCancelled.set(false);
+        points.set(0);
+        totalPoints.set(0);
+        leaderboard.set([]);
+        playerName.set(name);
+
         let packet: ConnectPacket = {
             id: PacketTypes.Connect,
             code: code,
             name: name,
         }
-
         this.net.sendPacket(packet);
     }
 
@@ -44,6 +50,7 @@ export class PlayerGame {
                 gameCancelled.set(true);
                 gameState.set(GameState.Lobby);
                 points.set(0);
+                totalPoints.set(0);
                 leaderboard.set([]);
                 intermissionImage.set(null);
                 intermissionQuestionName.set(null);
@@ -58,6 +65,7 @@ export class PlayerGame {
             case PacketTypes.PlayerReveal:{
                 let data = packet as PlayerRevealPacket;
                 points.set(data.points);
+                totalPoints.update(total => total + data.points);
                 break;
             }
             case PacketTypes.Leaderboard:{

@@ -3,6 +3,7 @@
     import { players, type HostGame, gameCancelled, gameCode } from "../../service/host/host";
 
     export let game: HostGame;
+    let debugMessage = "";
 
     function start() {
         game.start();
@@ -14,6 +15,30 @@
 
     function chooseQuiz() {
         game.returnToQuizSelection();
+    }
+
+    function openDebugPlayers() {
+        if (!$gameCode) {
+            debugMessage = "Host a game before opening debug players.";
+            return;
+        }
+
+        const batchId = Date.now();
+        let opened = 0;
+        for (let index = 1; index <= 8; index++) {
+            const url = new URL("/", window.location.origin);
+            url.searchParams.set("debug", "players");
+            url.searchParams.set("code", $gameCode);
+            url.searchParams.set("name", `Debug Player ${index}`);
+
+            if (window.open(url, `debug-player-${batchId}-${index}`)) {
+                opened++;
+            }
+        }
+
+        debugMessage = opened === 8
+            ? "Opened 8 debug player windows."
+            : `Opened ${opened} of 8 player windows. Allow pop-ups to open the rest.`;
     }
 
     const bubblePatterns = [
@@ -80,9 +105,13 @@
             </div>
         {:else}
             <div class="flex justify-end px-4 gap-4">
+                <Button on:click={openDebugPlayers}>Debug: Open 8 Players</Button>
                 <Button on:click={start}>Start Game</Button>
                 <Button on:click={cancel}>Cancel Game</Button>
             </div>
+            {#if debugMessage}
+                <p class="mt-3 text-right text-white" role="status">{debugMessage}</p>
+            {/if}
             <div class="text-center text-white">
                 <h2 class="text-4xl">Join with game code</h2>
                 <h2 class="mt-4 text-6xl font-bold">{$gameCode}</h2>
@@ -103,58 +132,3 @@
         {/if}
     </div>
 </div>
-
-<style>
-    .bubbles {
-        position: absolute;
-        inset: 0;
-        overflow: hidden;
-        margin: 0;
-        padding: 0;
-        list-style: none;
-        pointer-events: none;
-        z-index: 0;
-    }
-
-    .bubbles li {
-        position: absolute;
-        bottom: -150px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        background: rgb(255 255 255 / 20%);
-        animation: float-up 25s linear infinite;
-    }
-
-    .bubbles li span {
-        max-width: 80%;
-        color: white;
-        font-size: clamp(0.7rem, 1.5vw, 1rem);
-        font-weight: 700;
-        line-height: 1.2;
-        overflow-wrap: anywhere;
-        text-align: center;
-        text-shadow: 0 1px 3px rgb(0 0 0 / 40%);
-    }
-
-    @keyframes float-up {
-        0% {
-            transform: translateY(0) rotate(0deg);
-            opacity: 1;
-            border-radius: 0;
-        }
-
-        100% {
-            transform: translateY(calc(-100vh - 150px)) rotate(720deg);
-            opacity: 0;
-            border-radius: 50%;
-        }
-    }
-
-    @media (prefers-reduced-motion: reduce) {
-        .bubbles li,
-        .bubbles li span {
-            animation-play-state: paused;
-        }
-    }
-</style>

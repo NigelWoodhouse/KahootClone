@@ -26,6 +26,7 @@ function resetHostState() {
 
 export class HostGame {
     private net: NetService;
+    private quitRequested = false;
 
     constructor(){
         this.net = new NetService();
@@ -51,6 +52,19 @@ export class HostGame {
         this.net.sendPacket({ id: PacketTypes.CancelGame });
     }
 
+    quit() {
+        this.quitRequested = true;
+        try {
+            this.net.sendPacket({ id: PacketTypes.CancelGame });
+        } catch (error) {
+            this.quitRequested = false;
+            throw error;
+        }
+
+        resetHostState();
+        gameCancelled.set(false);
+    }
+
     returnToQuizSelection() {
         gameCancelled.set(false);
     }
@@ -59,7 +73,8 @@ export class HostGame {
         switch(packet.id){
             case PacketTypes.CancelGame: {
                 resetHostState();
-                gameCancelled.set(true);
+                gameCancelled.set(!this.quitRequested);
+                this.quitRequested = false;
                 break;
             }
 

@@ -36,7 +36,7 @@
     })();
 </script>
 
-<div class="page-background justify-center min-h-screen max-w-4xl mx-auto">
+<div class="page-background justify-center min-h-screen ">
 <div class="flex justify-center items-center gap-4 p-4">
         <h2 class="text-4xl center font-bold text-white">Quizzes</h2>
         {#if quizzes && quizzes.length > 0}

@@ -5,3 +5,60 @@
 .page-background {
     background: linear-gradient(to left, #8f94fb, #4e54c8);
 }
+
+.global-liquid-glass {
+    border-radius: 3rem;
+}
+
+.bubbles {
+    position: absolute;
+    inset: 0;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+    list-style: none;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.bubbles li {
+    position: absolute;
+    bottom: -150px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgb(255 255 255 / 20%);
+    animation: float-up 25s linear infinite;
+}
+
+.bubbles li span {
+    max-width: 80%;
+    color: white;
+    font-size: clamp(0.7rem, 1.5vw, 1rem);
+    font-weight: 700;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+    text-align: center;
+    text-shadow: 0 1px 3px rgb(0 0 0 / 40%);
+}
+
+@keyframes float-up {
+    0% {
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+        border-radius: 0;
+    }
+
+    100% {
+        transform: translateY(calc(-100vh - 150px)) rotate(720deg);
+        opacity: 0;
+        border-radius: 50%;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .bubbles li,
+    .bubbles li span {
+        animation-play-state: paused;
+    }
+}

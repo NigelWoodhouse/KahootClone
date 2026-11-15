@@ -80,6 +80,7 @@ export class NetService {
     private webSocket!: WebSocket;
     private textDecoder: TextDecoder = new TextDecoder();
     private textEncoder: TextEncoder = new TextEncoder();
+    private pendingPackets: Uint8Array<ArrayBuffer>[] = [];
 
     private onPacketCallback?: (packet: any) => void;
 
@@ -87,6 +88,10 @@ export class NetService {
         this.webSocket = new WebSocket("ws://localhost:3000/ws");
         this.webSocket.onopen = () => {
             console.log("opened connection");
+            for (const packet of this.pendingPackets) {
+                this.webSocket.send(packet);
+            }
+            this.pendingPackets = [];
         };
 
         this.webSocket.onmessage = async (event: MessageEvent) => {
@@ -120,12 +125,18 @@ export class NetService {
 		const packetDataArray = this.textEncoder.encode(packetData);
 
 		const mergedArray = new Uint8Array(
-			packetIdArray.length + packetDataArray.length,
+			new ArrayBuffer(packetIdArray.length + packetDataArray.length),
 		);
 		mergedArray.set(packetIdArray);
 		mergedArray.set(packetDataArray, packetIdArray.length);
 
-		this.webSocket.send(mergedArray);
+        if (this.webSocket.readyState === WebSocket.OPEN) {
+            this.webSocket.send(mergedArray);
+        } else if (this.webSocket.readyState === WebSocket.CONNECTING) {
+            this.pendingPackets.push(mergedArray);
+        } else {
+            throw new Error("Cannot send packet because the WebSocket is not connected.");
+        }
 	}
 
 }

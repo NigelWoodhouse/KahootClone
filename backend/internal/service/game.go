@@ -20,6 +20,7 @@ type Player struct {
 	Points            int             `json:"-"`
 	LastAwardedPoints int             `json:"-"`
 	Answered          bool            `json:"-"`
+	AnsweredCorrectly bool            `json:"-"`
 }
 
 type GameState int
@@ -96,12 +97,21 @@ func (g *Game) Start() {
 func (g *Game) ResetPlayerAnswerStates() {
 	for _, player := range g.Players {
 		player.Answered = false
+		player.AnsweredCorrectly = false
 	}
 }
 
 func (g *Game) End() {
 	g.Ended = true
 	g.ChangeState(EndState)
+
+	packet := LeaderboardPacket{
+		Points: g.getLeaderboard(),
+	}
+	g.netService.SendPacket(g.Host, packet)
+	for _, player := range g.Players {
+		g.netService.SendPacket(player.Connection, packet)
+	}
 }
 
 func (g *Game) NextQuestion() {
@@ -194,7 +204,7 @@ func (g *Game) getLeaderboard() []LeaderboardEntry {
 	})
 
 	leaderboard := []LeaderboardEntry{}
-	for i := 0; i < int(math.Min(3, float64(len(g.Players)))); i++ {
+	for i := 0; i < len(g.Players); i++ {
 		player := g.Players[i]
 		leaderboard = append(leaderboard, LeaderboardEntry{
 			Name:   player.Name,
@@ -278,6 +288,18 @@ func (g *Game) getAnsweredPlayers() []*Player {
 	return players
 }
 
+func (g *Game) getCorrectAnsweredPlayers() []*Player {
+	players := []*Player{}
+
+	for _, player := range g.Players {
+		if player.AnsweredCorrectly {
+			players = append(players, player)
+		}
+	}
+
+	return players
+}
+
 func (g *Game) getCurrentQuestion() entity.QuizQuestion {
 	return g.Quiz.Questions[g.CurrentQuestion]
 }
@@ -292,15 +314,16 @@ func (g *Game) isCorrectChoice(choiceIndex int) bool {
 }
 
 func (g *Game) getPointsReward() int {
-	answered := len(g.getAnsweredPlayers())
-	orderReward := 1000 - (1000 * math.Min(4, float64(answered)))
-	timeReward := g.Time * (1000 / 60)
+	answered := len(g.getCorrectAnsweredPlayers())
+	orderReward := 900 - (100 * math.Min(9, float64(answered)))
+	timeReward := g.Time * (100 / 60)
 
 	return int(orderReward) + timeReward
 }
 
 func (g *Game) OnPlayerAnswer(choice int, player *Player) {
-	if g.isCorrectChoice(choice) {
+	correct := g.isCorrectChoice(choice)
+	if correct {
 		player.LastAwardedPoints = g.getPointsReward()
 		player.Points += player.LastAwardedPoints
 	} else {
@@ -308,6 +331,7 @@ func (g *Game) OnPlayerAnswer(choice int, player *Player) {
 	}
 
 	player.Answered = true
+	player.AnsweredCorrectly = correct
 
 	if len(g.getAnsweredPlayers()) == len(g.Players) {
 		g.Reveal()
