@@ -177,7 +177,7 @@ func (g *Game) Tick() {
 }
 
 func (g *Game) Intermission() {
-	g.Time = 500
+	g.Time = 10
 	g.ChangeState(IntermissionState)
 
 	var image string

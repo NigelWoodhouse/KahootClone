@@ -96,15 +96,15 @@
         {/each}
     </ul>
 
-    <div class="relative z-10">
+    <div class="relative z-10 roundered-xl">
         {#if $gameCancelled}
-            <div class="text-center text-white">
+            <div class="text-center text-white roundered-xl">
                 <h2 class="text-4xl">Game Cancelled</h2>
                 <p class="mt-4">The session is closed and all players have been disconnected.</p>
                 <Button on:click={chooseQuiz}>Choose Quiz</Button>
             </div>
         {:else}
-            <div class="flex justify-end px-4 gap-4">
+            <div class="flex justify-end px-4 gap-4 roundered-xl">
                 <Button on:click={() => openDebugPlayers(1)}>Debug: Open 1 Player</Button>
                 <Button on:click={() => openDebugPlayers(8)}>Debug: Open 8 Players</Button>
                 <Button on:click={start}>Start Game</Button>

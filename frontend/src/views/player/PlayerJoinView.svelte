@@ -38,10 +38,10 @@
                 The host has closed this session. Join another game when you are ready.
             </p>
         {/if}
-        <div class="flex flex-col gap-2 mt-10 items-center">
+        <div class="flex flex-col gap-2 mt-10 items-center rounded-xl">
             <input bind:value={code} type="text" placeholder="Game Code" class="p-2 rounded" />
             <input bind:value={name} type="text" placeholder="Name" class="p-2 rounded" />
-            <Button on:click={join}>Join game</Button>
+            <Button on:click={join}>Join Game</Button>
         </div>
     </div>
 </div>

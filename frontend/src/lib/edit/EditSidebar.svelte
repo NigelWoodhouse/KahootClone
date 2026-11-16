@@ -11,7 +11,7 @@
     }
 </script>
 
-<div class="bg-gray-100 min-h-screen min-w-64 p-2 flex flex-col gap-2">
+<div class="page-background min-h-screen min-w-64 p-2 flex flex-col gap-2">
     {#each questions as question}
         <SidebarItem {question} bind:selectedQuestion />
     {/each}

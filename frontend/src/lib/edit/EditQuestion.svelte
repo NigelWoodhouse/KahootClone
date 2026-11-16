@@ -80,14 +80,14 @@
     }
 </script>
 
-<div class="p-14 w-full flex-1">
-	<div class="flex flex-col min-h-[95%] border rounded-lg shadow-sm bg-white overflow-hidden">
+<div class="page-background p-14 w-full flex-1">
+	<div class="flex flex-col min-h-[95%] border rounded-lg shadow-sm overflow-hidden">
 		<div
-			class="flex font-bold text-center bg-gray-50 items-center border-b p-2 justify-between"
+			class="flex font-bold text-center items-center border-b p-2 justify-between"
 		>
 			<div class="w-32"></div>
 			<input
-				class="p-4 text-3xl bg-gray-50 text-center font-bold outline-none border-b-2 border-transparent focus:border-purple-500 transition-colors"
+				class="p-4 text-3xl text-center font-bold outline-none border-b-2 border-transparent focus:border-purple-500 transition-colors"
                 on:change
 				bind:value={selectedQuestion.name}
 			/>

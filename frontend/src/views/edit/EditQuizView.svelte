@@ -51,7 +51,7 @@
 </script>
 
 {#if quiz != null}
-    <div class="bg-gray-100 w-full p-2 flex justify-end items-center border-b">
+    <div class="page-background w-full p-2 flex justify-end items-center border-b">
         <div class="flex items-center gap-2">
             {#if saveSuccess}
                 <span class="text-xs text-emerald-600 font-semibold flex items-center gap-1">
