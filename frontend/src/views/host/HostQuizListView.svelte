@@ -36,35 +36,27 @@
     })();
 </script>
 
-<div class="page-background justify-center min-h-screen ">
-<div class="flex justify-center items-center gap-4 p-4">
-        <h2 class="text-4xl center font-bold text-white">Quizzes</h2>
-        {#if quizzes && quizzes.length > 0}
-        <div>
+<div class="page-background min-h-screen px-6 py-6">
+    <header class="mx-auto flex w-full max-w-6xl items-center justify-between gap-6">
+        <h2 class="text-4xl font-bold text-white">Quizzes</h2>
+        <div class="flex items-center justify-end gap-3 rounded-xl">
             <Button on:click={createQuiz}>Create Quiz</Button>
             <Button on:click={onBack}>Back</Button>
         </div>
-        {/if}
-</div>
-
+    </header>
 
     {#if loading}
-        <p class="text-gray-500">Loading quizzes...</p>
+        <p class="mx-auto mt-8 max-w-6xl text-white/80">Loading quizzes...</p>
     {:else if quizzes && quizzes.length > 0}
-        <div class="flex flex-col gap-2">
+        <div class="mx-auto mt-8 flex w-full max-w-6xl flex-col gap-3">
             {#each quizzes as quiz (quiz.id)}
                 <QuizCard on:host on:delete={(event) => onDelete(event.detail)} {quiz} />
             {/each}
         </div>
     {:else}
-        <div class="p-8 border-2 border-dashed border-gray-300 rounded-xl text-center bg-gray-50 mt-4">
-            <h3 class="text-xl font-semibold text-gray-700 mb-2">No quizzes found</h3>
-            <p class="text-gray-500 mb-6">There are currently no quizzes in MongoDB. Create a new quiz to get started!</p>
-            <div>
-                <Button on:click={createQuiz}>Create Quiz</Button>
-                <Button on:click={onBack}>Back</Button>
-            </div>
+        <div class="mx-auto mt-8 max-w-6xl rounded-xl border border-dashed border-white/30 bg-white/10 p-8 text-center">
+            <h3 class="mb-2 text-xl font-semibold text-white">No quizzes found</h3>
+            <p class="text-white/80">There are currently no quizzes in MongoDB. Create a new quiz to get started!</p>
         </div>
     {/if}
-
 </div>

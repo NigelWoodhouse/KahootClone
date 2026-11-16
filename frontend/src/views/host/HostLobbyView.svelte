@@ -17,7 +17,7 @@
         game.returnToQuizSelection();
     }
 
-    function openDebugPlayers() {
+    function openDebugPlayers(count: number) {
         if (!$gameCode) {
             debugMessage = "Host a game before opening debug players.";
             return;
@@ -25,7 +25,7 @@
 
         const batchId = Date.now();
         let opened = 0;
-        for (let index = 1; index <= 8; index++) {
+        for (let index = 1; index <= count; index++) {
             const url = new URL("/", window.location.origin);
             url.searchParams.set("debug", "players");
             url.searchParams.set("code", $gameCode);
@@ -105,7 +105,8 @@
             </div>
         {:else}
             <div class="flex justify-end px-4 gap-4">
-                <Button on:click={openDebugPlayers}>Debug: Open 8 Players</Button>
+                <Button on:click={() => openDebugPlayers(1)}>Debug: Open 1 Player</Button>
+                <Button on:click={() => openDebugPlayers(8)}>Debug: Open 8 Players</Button>
                 <Button on:click={start}>Start Game</Button>
                 <Button on:click={cancel}>Cancel Game</Button>
             </div>

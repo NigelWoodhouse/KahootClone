@@ -2,7 +2,7 @@
     import type { Snippet } from "svelte";
     import { LiquidGlass } from "liquid-glass-svelte";
 
-    let { children }: { children: Snippet } = $props();
+    let { children }: { children: Snippet; } = $props();
 
     const options = {
         mainBackgroundColor: "hsla(0, 0%, 75%, 0.1)",

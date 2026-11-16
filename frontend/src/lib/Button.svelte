@@ -1,11 +1,16 @@
-<button on:click class="button-background bg-blue-500 hover:bg-blue-600 text-white rounded-md px-4 py-2">
-    <div>
+<script lang="ts">
+    import GlobalLiquidGlass from "./GlobalLiquidGlass.svelte";
+</script>
+
+<GlobalLiquidGlass>
+    <button
+        on:click
+        class="inline-flex items-center justify-center rounded-xl border border-white/20 px-5 py-2 text-white transition-all duration-200 hover:-translate-y-0.5 hover:border-white/40 hover:bg-white/20 hover:shadow-lg active:translate-y-0 active:scale-95 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-white"
+    >
         <slot />
-    </div>
-</button>
+    </button>
+</GlobalLiquidGlass>
 
 <style>
-    .button-background {
-        background: linear-gradient(to bottom, #b6e8ae, #5cd44a);
-    }
+
 </style>

@@ -12,6 +12,12 @@
 
     $: displayImage = $intermissionImage || $currentQuestion?.image || "";
     $: questionName = $intermissionQuestionName || $currentQuestion?.name || "";
+    $: questionAnswer = $currentQuestion?.choices
+        .filter((choice) => choice.correct)
+        .map((choice) => choice.name)
+        .filter((answer) => answer.trim().length > 0)
+        .join(", ") || "";
+
 </script>
 
 <div class="page-background relative isolate min-h-screen w-full overflow-hidden flex flex-col text-white">
@@ -28,11 +34,6 @@
             <span class="bg-yellow-400 text-purple-950 px-3.5 py-1 rounded-full text-sm font-extrabold tracking-wider uppercase shadow-md">
                 Intermission
             </span>
-            {#if questionName}
-                <h1 class="text-2xl font-bold tracking-tight text-white/90 drop-shadow">
-                    {questionName}
-                </h1>
-            {/if}
         </div>
         <div class="flex items-center gap-4">
             {#if $tick > 0}
@@ -49,16 +50,31 @@
     </div>
 
     <!-- Main Content Stage -->
+     <div>
+     <div class = "relative z-10 flex flex-col items-center justify-center p-8">
+
+        {#if questionName}
+            <h1 class="text-2xl font-bold tracking-tight text-white/90 drop-shadow">
+                <b>{questionName}</b>
+            </h1>
+        {/if}
+        {#if questionAnswer}
+            <p class="mt-2 text-lg font-semibold text-yellow-200">
+                Answer: {questionAnswer}
+            </p>
+        {/if}
+     </div>
+
     <div class="relative z-10 flex-1 flex items-center justify-center p-8">
         {#if displayImage}
             <div class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
                 <!-- Intermission Image Card -->
                 <div class="flex flex-col items-center">
-                    <div class="bg-white/10 backdrop-blur-md p-4 rounded-3xl border border-white/20 shadow-2xl overflow-hidden max-h-[500px] flex items-center justify-center transition-all hover:scale-[1.01]">
+                    <div class="bg-white/10 backdrop-blur-md p-4 rounded-3xl border border-white/20 shadow-2xl overflow-hidden  block flex items-center justify-center transition-all hover:scale-[1.01]">
                         <img
                             src={apiService.getImageUrl(displayImage)}
                             alt="Question intermission visual"
-                            class="max-h-[460px] w-auto max-w-full object-contain rounded-2xl shadow-inner"
+                            class="w-[50vw] h-auto w-auto max-w-[500px] object-contain rounded-2xl shadow-inner"
                         />
                     </div>
                     {#if questionName}
@@ -69,27 +85,19 @@
                 </div>
 
                 <!-- Leaderboard Section -->
-                <div class="flex flex-col items-center">
-                    <div class="w-full max-w-md bg-white/10 backdrop-blur-md p-6 rounded-3xl border border-white/20 shadow-2xl">
-                        <h2 class="text-xl font-bold text-center text-yellow-300 mb-4 tracking-wide uppercase">
-                            Scoreboard
-                        </h2>
-                        <Leaderboard leaderboard={$leaderboard} />
-                    </div>
+                    <div class="flex flex-col items-center w-full max-w-md rounded-3xl shadow-2xl">
+                        <Leaderboard finish={true} leaderboard={$leaderboard} />
                 </div>
             </div>
         {:else}
             <!-- If no image, display centered leaderboard -->
-            <div class="flex flex-col items-center">
-                <div class="w-full max-w-md bg-white/10 backdrop-blur-md p-8 rounded-3xl border border-white/20 shadow-2xl">
-                    <h2 class="text-2xl font-extrabold text-center text-yellow-300 mb-6 tracking-wide uppercase">
-                        Scoreboard
-                    </h2>
-                    <Leaderboard leaderboard={$leaderboard} />
+                <div class= "flex flex-col items-center w-full max-w-md rounded-3xl shadow-2xl">
+                    <Leaderboard finish={true} leaderboard={$leaderboard} />
                 </div>
-            </div>
         {/if}
     </div>
+     </div>
+
 </div>
 
 <style>

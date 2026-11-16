@@ -20,7 +20,7 @@
     ];
 </script>
 
-<div class="page-background relative isolate min-h-screen w-full overflow-hidden px-6 py-12">
+<div class="page-background relative isolate flex h-dvh w-full items-center justify-center overflow-hidden px-4 py-4">
     <ul class="bubbles" aria-hidden="true">
         {#each bubbles as bubble}
             <li
@@ -28,14 +28,14 @@
             ></li>
         {/each}
     </ul>
-    <div class="relative z-10 flex flex-col items-center">
-        <h2 class="text-center text-white text-5xl font-bold">Game Ended!</h2>
+    <div class="relative z-10 flex w-full flex-col items-center">
+        <h2 class="text-center text-white text-4xl font-bold sm:text-5xl">Game Ended!</h2>
 
-        <div class="flex flex-wrap justify-center gap-2 mt-10 w-full">
-            <Leaderboard finish={true} leaderboard={$leaderboard} />
+        <div class="mt-4 flex w-full justify-center">
+            <Leaderboard finish={true} leaderboard={$leaderboard} limit={5} />
         </div>
 
-        <div class="mt-8">
+        <div class="mt-4">
             <Button on:click={() => game.quit()}>Quit game</Button>
         </div>
     </div>

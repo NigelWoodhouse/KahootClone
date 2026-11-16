@@ -23,7 +23,7 @@
 
 .bubbles li {
     position: absolute;
-    bottom: -150px;
+    bottom: -180px;
     display: flex;
     align-items: center;
     justify-content: center;

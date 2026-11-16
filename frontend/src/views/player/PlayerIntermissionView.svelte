@@ -1,9 +1,17 @@
 <script lang="ts">
-    import { intermissionQuestionName, intermissionImage, leaderboard, totalPoints, type PlayerGame } from "../../service/player/player";
+    import { intermissionQuestionName, intermissionImage, leaderboard, playerName, totalPoints, type PlayerGame } from "../../service/player/player";
     import { apiService } from "../../service/api";
     import Leaderboard from "../../lib/Leaderboard.svelte";
 
     export let game: PlayerGame;
+
+    $: matchedPlayerIndex = $leaderboard.findIndex(
+        (entry) => entry.name === $playerName && entry.points === $totalPoints,
+    );
+    $: playerIndex = matchedPlayerIndex >= 0
+        ? matchedPlayerIndex
+        : $leaderboard.findIndex((entry) => entry.name === $playerName);
+    $: currentPosition = playerIndex >= 0 ? playerIndex + 1 : undefined;
 
     const bubbles = [
         { left: "25%", size: 100, delay: 0, duration: 25 },
@@ -32,13 +40,13 @@
             Intermission
         </span>
 
-        {#if $intermissionQuestionName}
+        <!-- {#if $intermissionQuestionName}
             <h2 class="text-xl font-bold mb-3 text-white/90">
                 {$intermissionQuestionName}
             </h2>
-        {/if}
+        {/if} -->
 
-        {#if $intermissionImage}
+        <!-- {#if $intermissionImage}
             <div class="w-full bg-white/10 backdrop-blur-md p-3 rounded-2xl border border-white/20 shadow-xl mb-6 overflow-hidden flex items-center justify-center">
                 <img
                     src={apiService.getImageUrl($intermissionImage)}
@@ -46,18 +54,22 @@
                     class="max-h-60 max-w-full object-contain rounded-xl shadow"
                 />
             </div>
-        {/if}
+        {/if} -->
 
-        <div class="w-full rounded-2xl bg-purple-600 px-5 py-3 shadow-lg mb-4">
+        <!-- <div class="w-full rounded-2xl bg-purple-600 px-5 py-3 shadow-lg mb-4">
             <p class="text-sm text-white/75">Your total score</p>
             <p class="text-3xl font-extrabold text-yellow-300">{$totalPoints} pts</p>
-        </div>
+        </div> -->
 
         {#if $leaderboard && $leaderboard.length > 0}
-            <div class="w-full bg-white/10 backdrop-blur-md p-5 rounded-2xl border border-white/15 shadow-lg mb-4">
-                <h3 class="text-sm font-bold text-yellow-300 uppercase tracking-wider mb-3">Leaderboard</h3>
-                <Leaderboard leaderboard={$leaderboard} />
-            </div>
+            <!-- <div class="w-full backdrop-blur-md p-5 rounded-2xl border shadow-lg mb-4"> -->
+                <!-- <h3 class="text-sm font-bold text-yellow-300 uppercase tracking-wider mb-3">Leaderboard</h3> -->
+                <Leaderboard
+                    leaderboard={$leaderboard}
+                    limit={3}
+                    position={currentPosition}
+                />
+            <!-- </div> -->
         {:else}
             <div class="bg-white/10 backdrop-blur-md p-6 rounded-2xl border border-white/15 shadow-lg mb-4 w-full">
                 <p class="text-sm text-white/70 mt-1">Get ready for the next question!</p>
