@@ -11,9 +11,11 @@
     }
 </script>
 
-<div class="page-background min-h-screen min-w-64 p-2 flex flex-col gap-2">
+<div class="page-background min-h-screen w-full min-w-0 overflow-hidden p-2">
     {#each questions as question}
         <SidebarItem {question} bind:selectedQuestion />
     {/each}
-    <Button on:click={addNew}>Add new</Button>
+    <div class="items-center w-full flex justify-center">
+        <Button on:click={addNew}>Add new</Button>
+    </div>
 </div>

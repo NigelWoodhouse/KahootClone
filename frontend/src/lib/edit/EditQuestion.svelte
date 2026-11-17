@@ -2,6 +2,7 @@
     import { createEventDispatcher } from "svelte";
     import { COLORS, type QuizQuestion } from "../../model/quiz";
     import Button from "../Button.svelte";
+    import RichTextEditor from "./RichTextEditor.svelte";
     import QuizChoiceCard from "../play/QuizChoiceCard.svelte";
     import Clock from "../Clock.svelte";
     import { apiService } from "../../service/api";
@@ -80,18 +81,21 @@
     }
 </script>
 
-<div class="page-background p-14 w-full flex-1">
+<div class="page-background w-full min-w-0 p-6">
 	<div class="flex flex-col min-h-[95%] border rounded-lg shadow-sm overflow-hidden">
 		<div
-			class="flex font-bold text-center items-center border-b p-2 justify-between"
+			class="flex items-start gap-4 border-b p-3"
 		>
-			<div class="w-32"></div>
-			<input
-				class="p-4 text-3xl text-center font-bold outline-none border-b-2 border-transparent focus:border-purple-500 transition-colors"
-                on:change
-				bind:value={selectedQuestion.name}
-			/>
-			<div class="w-32 flex justify-end pr-2">
+			<div class="w-24 shrink-0"></div>
+			<div class="min-w-0 flex-1">
+				{#key selectedQuestion.id}
+					<RichTextEditor
+						bind:value={selectedQuestion.name}
+						on:change={() => dispatch("change")}
+					/>
+				{/key}
+			</div>
+			<div class="flex w-24 shrink-0 justify-end pr-2">
 				<Button on:click={onDelete}>Delete</Button>
 			</div>
 		</div>

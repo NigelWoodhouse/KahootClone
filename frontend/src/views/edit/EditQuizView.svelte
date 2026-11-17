@@ -5,6 +5,7 @@
     import type { Quiz, QuizQuestion } from "../../model/quiz";
     import { apiService } from "../../service/api";
     import { createEventDispatcher } from 'svelte';
+    import { sanitizeRichText } from "../../lib/richText";
 
     export let params: Record<string, string>;
     const dispatch = createEventDispatcher();
@@ -27,6 +28,9 @@
 
     (async function () {
         quiz = await apiService.getQuizById(params["quizId"]);
+        quiz?.questions.forEach((question) => {
+            question.name = sanitizeRichText(question.name);
+        });
         if (quiz && quiz.questions && quiz.questions.length > 0) {
             selectedQuestion = quiz.questions[0];
         }
@@ -69,7 +73,7 @@
             <Button on:click={onBack}>{"Back"}</Button>
         </div>
     </div>
-    <div class="flex">
+    <div class="grid min-h-screen w-full grid-cols-[25%_minmax(0,1fr)]">
         <EditSidebar bind:questions={quiz.questions} bind:selectedQuestion />
         {#if selectedQuestion != null}
             <EditQuestion

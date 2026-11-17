@@ -3,6 +3,7 @@
     import Leaderboard from "../../lib/Leaderboard.svelte";
     import { HostGame, intermissionImage, leaderboard, intermissionQuestionName, currentQuestion, tick } from "../../service/host/host";
     import { apiService } from "../../service/api";
+    import { sanitizeRichText } from "../../lib/richText";
 
     export let game: HostGame;
 
@@ -54,9 +55,9 @@
      <div class = "relative z-10 flex flex-col items-center justify-center p-8">
 
         {#if questionName}
-            <h1 class="text-2xl font-bold tracking-tight text-white/90 drop-shadow">
-                <b>{questionName}</b>
-            </h1>
+            <div class="rich-text-content text-2xl font-bold tracking-tight text-white/90 drop-shadow">
+                {@html sanitizeRichText(questionName)}
+            </div>
         {/if}
         {#if questionAnswer}
             <p class="mt-2 text-lg font-semibold text-yellow-200">
@@ -78,9 +79,9 @@
                         />
                     </div>
                     {#if questionName}
-                        <p class="mt-3 text-sm font-medium text-white/70 italic text-center">
-                            "{questionName}"
-                        </p>
+                        <div class="rich-text-content mt-3 text-center text-sm font-medium italic text-white/70">
+                            "{@html sanitizeRichText(questionName)}"
+                        </div>
                     {/if}
                 </div>
 

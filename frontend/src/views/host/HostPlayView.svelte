@@ -3,6 +3,7 @@
     import { COLORS, type QuizChoice } from "../../model/quiz";
     import { tick, currentQuestion, gameState } from "../../service/host/host";
     import { GameState } from "../../service/net";
+    import { sanitizeRichText } from "../../lib/richText";
 
     function getCardColor(choice: QuizChoice, currentGameState: GameState, defaultColor: string){
         if(currentGameState != GameState.Reveal)
@@ -33,9 +34,9 @@
             </div>
         {/if}
         <div class="relative z-10 flex flex-1 items-center justify-center px-6 text-center">
-            <h1 class="text-6xl font-bold tracking-tight text-white drop-shadow">
-                {$currentQuestion.name}
-            </h1>
+            <div class="rich-text-content max-w-5xl text-6xl font-bold tracking-tight text-white drop-shadow">
+                {@html sanitizeRichText($currentQuestion.name)}
+            </div>
         </div>
         <div class="flex flex-wrap w-full h-96">
             {#each COLORS as color, i}

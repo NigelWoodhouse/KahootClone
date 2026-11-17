@@ -51,16 +51,18 @@
 	</dialog>
 {/if}
 
-<GlobalLiquidGlass>
-    <div class="flex items-center justify-between gap-4 rounded-xl border border-white/20 p-4">
-        <h1 class="text-xl font-bold text-white">{quiz.name}</h1>
-        <div class="flex items-center gap-2 rounded-xl">
-            <Button on:click={host}>Host</Button>
-            <Button on:click={edit}>Edit</Button>
-            <Button on:click={requestDelete}>Delete</Button>
+<div class="rounded-xl">
+    <GlobalLiquidGlass>
+        <div class="flex items-center justify-between gap-4 rounded-xl border border-white/20 p-4">
+            <h1 class="text-xl font-bold text-white">{quiz.name}</h1>
+            <div class="flex items-center gap-2 rounded-xl">
+                <Button on:click={host}>Host</Button>
+                <Button on:click={edit}>Edit</Button>
+                <Button on:click={requestDelete}>Delete</Button>
+            </div>
         </div>
-    </div>
-</GlobalLiquidGlass>
+    </GlobalLiquidGlass>
+</div>
 
 <style>
 

@@ -1,5 +1,6 @@
 <script lang="ts">
     import type { QuizQuestion } from "../../model/quiz";
+    import { richTextToPlainText } from "../richText";
 
     export let question: QuizQuestion;
     export let selectedQuestion: QuizQuestion | null;
@@ -10,13 +11,14 @@
 
     $: borderColor =
         selectedQuestion?.id == question.id ? "border-gray-500" : "";
+    $: questionLabel = richTextToPlainText(question.name);
 </script>
 
 <button
-    class="bg-white rounded-md p-2 border {borderColor} hover:bg-gray-50 flex items-center justify-between text-left transition-colors"
+    class="flex w-full min-w-0 items-center justify-between rounded-md border bg-white p-2 text-left transition-colors hover:bg-gray-50 {borderColor}"
     on:click={onClick}
 >
-    <span class="truncate">{question.name || "Untitled Question"}</span>
+    <span class="min-w-0 flex-1 truncate">{questionLabel || "Untitled Question"}</span>
     <!-- {#if question.image}
         <span title="Has intermission image" class="text-purple-600 ml-1.5 flex-shrink-0">
             <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
