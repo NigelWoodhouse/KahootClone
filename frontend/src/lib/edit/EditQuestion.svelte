@@ -7,6 +7,7 @@
     import Clock from "../Clock.svelte";
     import { apiService } from "../../service/api";
 
+    type ImageTarget = "question" | "intermission";
     const dispatch = createEventDispatcher();
 
     export let selectedQuestion: QuizQuestion;
@@ -14,8 +15,13 @@
     let fileInput: HTMLInputElement;
     let isUploading = false;
     let isDragOver = false;
-    let showUrlInput = false;
+    let uploadTarget: ImageTarget = "question";
+    let manualUrlTarget: ImageTarget | null = null;
     let manualUrl = "";
+    let currentImage: string;
+    $: currentImage = uploadTarget === "question"
+        ? selectedQuestion.questionImage ?? ""
+        : selectedQuestion.intermissionImage ?? "";
 
     function onDelete(){
         dispatch("delete");
@@ -27,7 +33,24 @@
         dispatch("change");
     }
 
-    function triggerFileInput() {
+    function setImage(imageTarget: ImageTarget, imageUrl: string) {
+        if (imageTarget === "question") {
+            selectedQuestion.questionImage = imageUrl;
+        } else {
+            selectedQuestion.intermissionImage = imageUrl;
+        }
+        selectedQuestion = selectedQuestion;
+    }
+
+    function selectImageTarget(imageTarget: ImageTarget) {
+        uploadTarget = imageTarget;
+        manualUrlTarget = null;
+        manualUrl = "";
+        isDragOver = false;
+    }
+
+    function triggerFileInput(imageTarget: ImageTarget) {
+        uploadTarget = imageTarget;
         if (fileInput) {
             fileInput.click();
         }
@@ -43,7 +66,7 @@
         try {
             const result = await apiService.uploadImage(file);
             if (result && result.url) {
-                selectedQuestion.image = result.url;
+                setImage(uploadTarget, result.url);
                 dispatch("change");
             }
         } finally {
@@ -59,25 +82,52 @@
         }
     }
 
-    function handleDrop(e: DragEvent) {
+    function handleDragOver(e: DragEvent, imageTarget: ImageTarget) {
+        e.preventDefault();
+        uploadTarget = imageTarget;
+        isDragOver = true;
+    }
+
+    function handleDragLeave() {
+        isDragOver = false;
+    }
+
+    function handleDrop(e: DragEvent, imageTarget: ImageTarget) {
+        e.preventDefault();
+        uploadTarget = imageTarget;
         isDragOver = false;
         if (e.dataTransfer && e.dataTransfer.files && e.dataTransfer.files.length > 0) {
             handleFile(e.dataTransfer.files[0]);
         }
     }
 
-    function removeImage() {
-        selectedQuestion.image = "";
+    function removeImage(imageType: "question" | "intermission") {
+        setImage(imageType, "");
+        if (manualUrlTarget === imageType) {
+            manualUrlTarget = null;
+        }
         manualUrl = "";
         dispatch("change");
     }
 
+    function openUrlInput(imageTarget: ImageTarget) {
+        manualUrl = "";
+        manualUrlTarget = imageTarget;
+    }
+
     function applyManualUrl() {
-        if (manualUrl.trim()) {
-            selectedQuestion.image = manualUrl.trim();
-            showUrlInput = false;
-            dispatch("change");
-        }
+        const imageUrl = manualUrl.trim();
+        if (!imageUrl || !manualUrlTarget) return;
+
+        setImage(manualUrlTarget, imageUrl);
+        manualUrlTarget = null;
+        manualUrl = "";
+        dispatch("change");
+    }
+
+    function cancelUrlInput() {
+        manualUrlTarget = null;
+        manualUrl = "";
     }
 </script>
 
@@ -122,6 +172,23 @@
 						class="hidden"
 					/>
 
+					<div class="mb-3 flex w-full gap-2">
+						<button
+							type="button"
+							on:click={() => selectImageTarget("question")}
+							class="flex-1 rounded-lg border px-3 py-2 text-sm font-semibold {uploadTarget === 'question' ? 'border-purple-500 bg-purple-100 text-purple-900' : 'border-gray-300 bg-white/70 text-gray-700'}"
+						>
+							Question State
+						</button>
+						<button
+							type="button"
+							on:click={() => selectImageTarget("intermission")}
+							class="flex-1 rounded-lg border px-3 py-2 text-sm font-semibold {uploadTarget === 'intermission' ? 'border-purple-500 bg-purple-100 text-purple-900' : 'border-gray-300 bg-white/70 text-gray-700'}"
+						>
+							Intermission
+						</button>
+					</div>
+
 					{#if isUploading}
 						<div class="w-full h-56 border-2 border-dashed border-purple-400 rounded-xl flex flex-col items-center justify-center bg-purple-50 text-purple-700 animate-pulse">
 							<svg class="animate-spin h-8 w-8 mb-2 text-purple-600" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
@@ -130,25 +197,26 @@
 							</svg>
 							<span class="font-medium">Uploading image to MongoDB...</span>
 						</div>
-					{:else if selectedQuestion.image}
+
+					{:else if currentImage}
 						<div class="relative group w-full flex flex-col items-center">
 							<div class="relative max-h-56 max-w-full overflow-hidden rounded-xl border border-gray-200 shadow-md bg-gray-900 flex items-center justify-center">
 								<img
-									src={apiService.getImageUrl(selectedQuestion.image)}
-									alt="Intermission preview"
+									src={apiService.getImageUrl(currentImage)}
+									alt="{uploadTarget === 'question' ? 'Question' : 'Intermission'} preview"
 									class="max-h-56 max-w-full object-contain"
 								/>
 								<div class="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center gap-2">
 									<button
 										type="button"
-										on:click={triggerFileInput}
+										on:click={() => triggerFileInput(uploadTarget)}
 										class="px-3 py-1.5 bg-white text-gray-800 text-xs font-semibold rounded-md shadow hover:bg-gray-100 transition"
 									>
 										Replace
 									</button>
 									<button
 										type="button"
-										on:click={removeImage}
+										on:click={() => removeImage(uploadTarget)}
 										class="px-3 py-1.5 bg-red-600 text-white text-xs font-semibold rounded-md shadow hover:bg-red-700 transition"
 									>
 										Remove
@@ -158,62 +226,66 @@
 							<div class="mt-1 flex items-center justify-between w-full text-xs text-gray-500 px-1">
 								<span class="flex items-center gap-1 text-emerald-600 font-medium">
 									<svg class="w-3.5 h-3.5 inline" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>
-									Intermission image saved
+									{uploadTarget === "question" ? "Question image saved" : "Intermission image saved"}
 								</span>
-								<button type="button" on:click={removeImage} class="text-red-500 hover:underline">Clear</button>
+								<button type="button" on:click={() => removeImage(uploadTarget)} class="text-red-500 hover:underline">Clear</button>
 							</div>
 						</div>
+
 					{:else}
 						<button
 							type="button"
 							class="w-full h-52 border-2 border-dashed rounded-xl flex flex-col items-center justify-center cursor-pointer transition-all {isDragOver ? 'border-purple-500 bg-purple-50 scale-102' : 'border-gray-300 hover:border-purple-400 hover:bg-gray-50'}"
-							on:click={triggerFileInput}
-							on:dragover|preventDefault={() => isDragOver = true}
-							on:dragleave={() => isDragOver = false}
-							on:drop|preventDefault={handleDrop}
+							on:click={() => triggerFileInput(uploadTarget)}
+							on:dragover={(event) => handleDragOver(event, uploadTarget)}
+							on:dragleave={handleDragLeave}
+							on:drop={(event) => handleDrop(event, uploadTarget)}
 						>
 							<div class="p-3 bg-purple-100 text-purple-600 rounded-full mb-2">
 								<svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
 									<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
 								</svg>
 							</div>
-							<span class="font-semibold text-gray-700 text-sm">Upload Intermission Image</span>
+							<span class="font-semibold text-gray-700 text-sm">Upload {uploadTarget === "question" ? "Question" : "Intermission"} Image</span>
 							<span class="text-xs text-gray-500 mt-1">Click to browse or drag & drop (saved to MongoDB)</span>
-							<span class="text-[11px] text-purple-600 font-medium mt-1">Displayed during IntermissionState</span>
+							<span class="text-[11px] text-purple-600 font-medium mt-1">
+								Displayed during {uploadTarget === "question" ? "QuestionState" : "IntermissionState"}
+							</span>
 						</button>
 						
-						{#if !showUrlInput}
+					{/if}
+
+					{#if manualUrlTarget === uploadTarget}
+						<div class="flex gap-1 mt-2 w-full">
+							<input
+								type="text"
+								placeholder="https://example.com/image.png"
+								bind:value={manualUrl}
+								class="flex-1 text-xs border rounded px-2 py-1"
+							/>
 							<button
 								type="button"
-								on:click={() => showUrlInput = true}
+								on:click={applyManualUrl}
+								class="px-2 py-1 bg-purple-600 text-white rounded text-xs"
+							>
+								Set
+							</button>
+							<button
+								type="button"
+								on:click={cancelUrlInput}
+								class="px-2 py-1 bg-gray-200 text-gray-600 rounded text-xs"
+							>
+								Cancel
+							</button>
+						</div>
+					{:else}
+							<button
+								type="button"
+								on:click={() => openUrlInput(uploadTarget)}
 								class="text-xs text-purple-600 hover:underline mt-1.5"
 							>
 								or enter image URL
 							</button>
-						{:else}
-							<div class="flex gap-1 mt-2 w-full">
-								<input
-									type="text"
-									placeholder="https://example.com/image.png"
-									bind:value={manualUrl}
-									class="flex-1 text-xs border rounded px-2 py-1"
-								/>
-								<button
-									type="button"
-									on:click={applyManualUrl}
-									class="px-2 py-1 bg-purple-600 text-white rounded text-xs"
-								>
-									Set
-								</button>
-								<button
-									type="button"
-									on:click={() => showUrlInput = false}
-									class="px-2 py-1 bg-gray-200 text-gray-600 rounded text-xs"
-								>
-									Cancel
-								</button>
-							</div>
-						{/if}
 					{/if}
 				</div>
 

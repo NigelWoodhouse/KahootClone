@@ -13,7 +13,8 @@ export interface QuizQuestion {
     id: string;
     name: string;
     time: number;
-    image?: string;
+    questionImage?: string;
+    intermissionImage?: string;
     choices: QuizChoice[];
 }
 
@@ -30,7 +31,8 @@ export function createDefaultQuestion(): QuizQuestion {
         id: crypto.randomUUID(),
         name: "Question",
         time: 60,
-        image: "",
+        questionImage: "",
+        intermissionImage: "",
         choices: [
             {
                 id: crypto.randomUUID(),

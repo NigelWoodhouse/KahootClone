@@ -9,6 +9,7 @@ export const gameCode: Writable<string | null> = writable(null);
 export const tick: Writable<number> = writable(0);
 export const leaderboard: Writable<LeaderboardEntry[]> = writable([]);
 export const currentQuestion: Writable<QuizQuestion | null> = writable(null);
+export const questionImage: Writable<string | null> = writable(null);
 export const intermissionImage: Writable<string | null> = writable(null);
 export const intermissionQuestionName: Writable<string | null> = writable(null);
 export const gameCancelled: Writable<boolean> = writable(false);
@@ -20,6 +21,7 @@ function resetHostState() {
     tick.set(0);
     leaderboard.set([]);
     currentQuestion.set(null);
+    questionImage.set(null);
     intermissionImage.set(null);
     intermissionQuestionName.set(null);
 }
@@ -105,12 +107,9 @@ export class HostGame {
             case PacketTypes.QuestionShow:{
                 let data = packet as QuestionShowPacket;
                 currentQuestion.set(data.question);
-                if (data.question?.image) {
-                    intermissionImage.set(data.question.image);
-                }
-                if (data.question?.name) {
-                    intermissionQuestionName.set(data.question.name);
-                }
+                questionImage.set(data.question.questionImage || null);
+                intermissionImage.set(data.question.intermissionImage || null);
+                intermissionQuestionName.set(data.question.name || null);
                 break;
             }
             case PacketTypes.Leaderboard:{

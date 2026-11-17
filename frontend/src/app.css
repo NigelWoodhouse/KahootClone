@@ -67,7 +67,7 @@
     padding: 0;
     list-style: none;
     pointer-events: none;
-    z-index: 0;
+    z-index: 20;
 }
 
 .bubbles li {

@@ -21,10 +21,11 @@ func Quiz(quizCollection *collection.QuizCollection) *QuizService {
 
 func (s QuizService) NewDefaultQuestion() entity.QuizQuestion {
 	return entity.QuizQuestion{
-		Id:    uuid.New().String(),
-		Name:  "Question",
-		Time:  60,
-		Image: "",
+		Id:                uuid.New().String(),
+		Name:              "Question",
+		Time:              60,
+		QuestionImage:     "",
+		IntermissionImage: "",
 		Choices: []entity.QuizChoice{
 			{
 				Id:      uuid.New().String(),

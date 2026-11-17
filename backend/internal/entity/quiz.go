@@ -11,11 +11,12 @@ type Quiz struct {
 }
 
 type QuizQuestion struct {
-	Id      string       `json:"id" bson:"id"`
-	Name    string       `json:"name" bson:"name"`
-	Time    int          `json:"time" bson:"time"`
-	Image   string       `json:"image" bson:"image,omitempty"`
-	Choices []QuizChoice `json:"choices" bson:"choices"`
+	Id                string       `json:"id" bson:"id"`
+	Name              string       `json:"name" bson:"name"`
+	Time              int          `json:"time" bson:"time"`
+	QuestionImage     string       `json:"questionImage" bson:"questionImage,omitempty"`
+	IntermissionImage string       `json:"intermissionImage" bson:"intermissionImage,omitempty"`
+	Choices           []QuizChoice `json:"choices" bson:"choices"`
 }
 
 type QuizChoice struct {

@@ -11,7 +11,7 @@
         game.start();
     }
 
-    $: displayImage = $intermissionImage || $currentQuestion?.image || "";
+    $: displayImage = $intermissionImage || $currentQuestion?.intermissionImage || "";
     $: questionName = $intermissionQuestionName || $currentQuestion?.name || "";
     $: questionAnswer = $currentQuestion?.choices
         .filter((choice) => choice.correct)
@@ -21,7 +21,7 @@
 
 </script>
 
-<div class="page-background relative isolate min-h-screen w-full overflow-hidden flex flex-col text-white">
+<div class="page-background relative isolate flex h-dvh min-h-0 w-full flex-col overflow-hidden text-white">
     <ul class="bubbles" aria-hidden="true">
         {#each [100, 40, 50, 80, 60, 130, 150, 45, 35, 170] as size, i}
             <li
@@ -30,7 +30,7 @@
         {/each}
     </ul>
     <!-- Top Header Bar -->
-    <div class="relative z-10 flex justify-between items-center px-10 py-6 border-b border-white/10 bg-black/20 backdrop-blur-sm">
+    <div class="relative z-10 flex shrink-0 items-center justify-between border-b border-white/10 bg-black/20 px-10 py-6 backdrop-blur-sm">
         <div class="flex items-center gap-4">
             <span class="bg-yellow-400 text-purple-950 px-3.5 py-1 rounded-full text-sm font-extrabold tracking-wider uppercase shadow-md">
                 Intermission
@@ -50,54 +50,39 @@
         </div>
     </div>
 
-    <!-- Main Content Stage -->
-     <div>
-     <div class = "relative z-10 flex flex-col items-center justify-center p-8">
-
+    <div class="relative z-10 flex h-[20vh] min-h-24 max-h-48 shrink-0 flex-col items-center justify-center overflow-y-auto px-6 py-3 text-center">
         {#if questionName}
             <div class="rich-text-content text-2xl font-bold tracking-tight text-white/90 drop-shadow">
                 {@html sanitizeRichText(questionName)}
             </div>
         {/if}
         {#if questionAnswer}
-            <p class="mt-2 text-lg font-semibold text-yellow-200">
+            <p class="mt-2 text-2xl font-semibold text-yellow-200 p-4">
                 Answer: {questionAnswer}
             </p>
         {/if}
-     </div>
+    </div>
 
-    <div class="relative z-10 flex-1 flex items-center justify-center p-8">
+    <div class="relative z-10 flex min-h-0 flex-1 items-center justify-center p-6">
         {#if displayImage}
-            <div class="w-full max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-10 items-center">
-                <!-- Intermission Image Card -->
-                <div class="flex flex-col items-center">
-                    <div class="bg-white/10 backdrop-blur-md p-4 rounded-3xl border border-white/20 shadow-2xl overflow-hidden  block flex items-center justify-center transition-all hover:scale-[1.01]">
-                        <img
-                            src={apiService.getImageUrl(displayImage)}
-                            alt="Question intermission visual"
-                            class="w-[50vw] h-auto w-auto max-w-[500px] object-contain rounded-2xl shadow-inner"
-                        />
-                    </div>
-                    {#if questionName}
-                        <div class="rich-text-content mt-3 text-center text-sm font-medium italic text-white/70">
-                            "{@html sanitizeRichText(questionName)}"
-                        </div>
-                    {/if}
+            <div class="flex h-full min-h-0 w-full max-w-7xl items-center justify-center gap-10">
+                <div class="flex h-full min-h-0 min-w-0 flex-1 items-center justify-center">
+                    <img
+                        src={apiService.getImageUrl(displayImage)}
+                        alt="Intermission visual"
+                        class="max-h-full max-w-full rounded-2xl border border-white/20 object-contain shadow-2xl"
+                    />
                 </div>
-
-                <!-- Leaderboard Section -->
-                    <div class="flex flex-col items-center w-full max-w-md rounded-3xl shadow-2xl">
-                        <Leaderboard finish={true} leaderboard={$leaderboard} />
+                <div class="flex min-h-0 w-full max-w-md shrink-0 items-center justify-center">
+                    <Leaderboard finish={true} leaderboard={$leaderboard} />
                 </div>
             </div>
         {:else}
-            <!-- If no image, display centered leaderboard -->
-                <div class= "flex flex-col items-center w-full max-w-md rounded-3xl shadow-2xl">
-                    <Leaderboard finish={true} leaderboard={$leaderboard} />
-                </div>
+            <div class="flex w-full max-w-md items-center justify-center">
+                <Leaderboard finish={true} leaderboard={$leaderboard} />
+            </div>
         {/if}
     </div>
-     </div>
 
 </div>
 

@@ -180,16 +180,15 @@ func (g *Game) Intermission() {
 	g.Time = 10
 	g.ChangeState(IntermissionState)
 
-	var image string
+	// var intermissionImage string
 	var questionName string
 	if g.CurrentQuestion >= 0 && g.CurrentQuestion < len(g.Quiz.Questions) {
 		currentQ := g.Quiz.Questions[g.CurrentQuestion]
-		image = currentQ.Image
+		// intermissionImage = currentQ.IntermissionImage
 		questionName = currentQ.Name
 	}
 	packet := LeaderboardPacket{
 		Points:       g.getLeaderboard(),
-		Image:        image,
 		QuestionName: questionName,
 	}
 	g.netService.SendPacket(g.Host, packet)
